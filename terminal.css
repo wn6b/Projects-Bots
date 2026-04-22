@@ -1,0 +1,13 @@
+/* css/terminal.css */
+.terminal-box {
+    background: #000;
+    border: 1px solid #333;
+    border-radius: 5px;
+    padding: 15px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.9rem;
+    height: 150px;
+    overflow-y: auto;
+    margin-top: 20px;
+    box-shadow: inset 0 0 10px #00ffcc11;
+}
