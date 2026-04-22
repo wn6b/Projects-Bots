@@ -1,0 +1,40 @@
+/* css/components.css */
+.glass-container {
+    background: var(--glass-bg);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    border: 1px solid rgba(0, 255, 204, 0.15);
+    border-radius: 20px;
+    padding: 40px;
+    width: 95%;
+    max-width: 800px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(0, 255, 204, 0.05);
+}
+
+.glitch-text {
+    font-size: 4rem;
+    font-weight: 900;
+    color: transparent;
+    -webkit-text-stroke: 1px var(--primary-glow);
+    text-shadow: 0 0 20px rgba(0, 255, 204, 0.5);
+    position: relative;
+}
+
+.cyber-btn {
+    background: transparent;
+    color: var(--primary-glow);
+    border: 2px solid var(--primary-glow);
+    padding: 15px 35px;
+    font-size: 1.2rem;
+    border-radius: 8px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: 0.3s;
+}
+
+.cyber-btn:hover {
+    background: var(--primary-glow);
+    color: var(--bg-dark);
+    box-shadow: 0 0 30px var(--primary-glow);
+}
