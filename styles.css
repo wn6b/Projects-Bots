@@ -1,0 +1,33 @@
+/* css/dashboard-styles.css */
+.sidebar {
+    position: fixed;
+    right: 0;
+    top: 0;
+    width: 200px;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    border-left: 1px solid var(--primary-glow);
+    padding: 20px;
+}
+
+.main-view {
+    margin-right: 220px;
+    width: 100%;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.data-table th, .data-table td {
+    border: 1px solid rgba(0, 255, 204, 0.2);
+    padding: 12px;
+    text-align: right;
+}
+
+.data-table th {
+    background: rgba(0, 255, 204, 0.1);
+    color: var(--primary-glow);
+}
