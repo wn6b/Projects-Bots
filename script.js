@@ -13,7 +13,9 @@ const OWNER = {
   password: 'f!2HgJv#)"E"y^i',
   name: 'وائل | Wano',
   username: 'wn6b',
-  role: 'owner'
+  role: 'owner',
+  bio: '',
+  pfp: ''
 };
 
 const ANTHROPIC_MODEL = 'claude-sonnet-4-20250514';
@@ -38,6 +40,8 @@ function initOwner() {
       name: OWNER.name,
       username: OWNER.username,
       role: 'owner',
+      bio: 'أنت على لوحة تحكم الـ Owner. كل شيء تحت سيطرتك.',
+      pfp: '',
       createdAt: new Date().toISOString()
     });
     DB.set('pb_users', users);
@@ -63,7 +67,6 @@ function startLoader() {
   const bar = document.getElementById('loaderBar');
   const status = document.getElementById('loaderStatus');
 
-  // particles
   const pc = document.getElementById('loaderParticles');
   for (let i = 0; i < 18; i++) {
     const d = document.createElement('div');
@@ -194,7 +197,6 @@ function switchTab(tab) {
     regTab.classList.remove('active');
     formLogin.classList.add('active');
     formReg.classList.remove('active');
-    // Slider position: RTL layout — "تسجيل الدخول" is left side (right side in RTL)
     slider.style.right = '4px';
     slider.style.left = '50%';
     slider.style.width = 'calc(50% - 4px)';
@@ -209,7 +211,6 @@ function switchTab(tab) {
   }
 }
 
-// Init slider on load
 document.addEventListener('DOMContentLoaded', () => {
   const slider = document.getElementById('tabSlider');
   if (slider) {
@@ -218,6 +219,7 @@ document.addEventListener('DOMContentLoaded', () => {
     slider.style.width = 'calc(50% - 4px)';
   }
 });
+
 // ══════════════════════════════════
 // LOGIN
 // ══════════════════════════════════
@@ -231,14 +233,14 @@ async function handleLogin() {
   hideEl(errEl);
 
   if (!email || !pass) {
-    showErr(errEl, '⚠️ الرجاء إدخال البريد وكلمة المرور');
+    showErr(errEl, '<i class="fa-solid fa-triangle-exclamation"></i> الرجاء إدخال البريد وكلمة المرور');
     return;
   }
 
   setLoading(btn, true);
   showAIThink('AI يتحقق من هويتك...');
 
-  await sleep(800); // simulate AI check
+  await sleep(800); 
 
   const users = DB.get('pb_users') || [];
   const user = users.find(u => u.email === email && u.password === pass);
@@ -246,9 +248,8 @@ async function handleLogin() {
   if (!user) {
     hideAIThink();
     setLoading(btn, false);
-    showErr(errEl, '❌ البريد الإلكتروني أو كلمة المرور غير صحيحة');
+    showErr(errEl, '<i class="fa-solid fa-xmark"></i> البريد الإلكتروني أو كلمة المرور غير صحيحة');
 
-    // AI analysis
     showAIThink('AI يحلل محاولة الدخول...');
     await sleep(1000);
     hideAIThink();
@@ -300,47 +301,46 @@ async function handleRegister() {
   hideEl(errEl); hideEl(sucEl);
 
   if (!name || !email || !pass || !passC) {
-    showErr(errEl, '⚠️ الرجاء ملء جميع الحقول');
+    showErr(errEl, '<i class="fa-solid fa-triangle-exclamation"></i> الرجاء ملء جميع الحقول');
     return;
   }
   if (pass !== passC) {
-    showErr(errEl, '❌ كلمة المرور غير متطابقة');
+    showErr(errEl, '<i class="fa-solid fa-xmark"></i> كلمة المرور غير متطابقة');
     return;
   }
   if (pass.length < 6) {
-    showErr(errEl, '❌ كلمة المرور يجب أن تكون 6 أحرف على الأقل');
+    showErr(errEl, '<i class="fa-solid fa-xmark"></i> كلمة المرور يجب أن تكون 6 أحرف على الأقل');
     return;
   }
   if (email === OWNER.email) {
-    showErr(errEl, '❌ هذا البريد غير متاح للتسجيل');
+    showErr(errEl, '<i class="fa-solid fa-ban"></i> هذا البريد غير متاح للتسجيل');
     return;
   }
 
   const users = DB.get('pb_users') || [];
   if (users.find(u => u.email === email)) {
-    showErr(errEl, '❌ البريد الإلكتروني مسجل بالفعل');
+    showErr(errEl, '<i class="fa-solid fa-xmark"></i> البريد الإلكتروني مسجل بالفعل');
     return;
   }
 
   setLoading(btn, true);
   showAIThink('AI يراجع حسابك...');
 
-  // AI review via Anthropic API
   let aiApproved = false;
   let aiMessage = '';
   try {
     aiApproved = await aiReviewAccount(name, email);
     aiMessage = aiApproved ? 'تم الموافقة على الحساب بواسطة AI' : 'تم رفض الحساب بواسطة AI';
   } catch {
-    aiApproved = true; // fallback allow
-    aiMessage = 'تم إنشاء الحساب';
+    aiApproved = true; 
+    aiMessage = 'تم إنشاء الحساب بنجاح';
   }
 
   hideAIThink();
   setLoading(btn, false);
 
   if (!aiApproved) {
-    showErr(errEl, '🤖 AI رفض إنشاء الحساب. الرجاء استخدام بيانات حقيقية.');
+    showErr(errEl, '<i class="fa-solid fa-robot"></i> AI رفض إنشاء الحساب. الرجاء استخدام بيانات حقيقية.');
     return;
   }
 
@@ -348,6 +348,8 @@ async function handleRegister() {
     email, password: pass, name,
     username: email.split('@')[0],
     role: 'user',
+    bio: 'مستخدم جديد في المنصة',
+    pfp: '',
     createdAt: new Date().toISOString()
   };
   users.push(newUser);
@@ -356,7 +358,7 @@ async function handleRegister() {
   addActivity(`حساب جديد: ${name}`);
   updateStats();
 
-  sucEl.textContent = `✅ ${aiMessage}! يمكنك الآن تسجيل الدخول.`;
+  sucEl.innerHTML = `<i class="fa-solid fa-check"></i> ${aiMessage}! يمكنك الآن تسجيل الدخول.`;
   sucEl.classList.remove('hidden');
 
   setTimeout(() => {
@@ -364,7 +366,6 @@ async function handleRegister() {
     document.getElementById('loginEmail').value = email;
   }, 2000);
 }
-
 // ══════════════════════════════════
 // AI ACCOUNT REVIEW (Anthropic API)
 // ══════════════════════════════════
@@ -412,10 +413,33 @@ function handleLogout() {
 }
 
 // ══════════════════════════════════
-// OWNER DASHBOARD
+// DASHBOARDS RENDERING
 // ══════════════════════════════════
 function showOwnerDash(user) {
   document.getElementById('ownerDash').classList.remove('hidden');
+  
+  // تحديث واجهة حساب المالك بالبيانات
+  document.getElementById('ownerSideName').textContent = user.name || user.username;
+  document.getElementById('welcomeOwnerHeader').innerHTML = `مرحباً، ${user.name || user.username} <i class="fa-solid fa-crown" style="color:var(--owner)"></i>`;
+  document.getElementById('ownerBioDisplay').textContent = user.bio || 'أنت على لوحة تحكم الـ Owner. كل شيء تحت سيطرتك.';
+  
+  const pfpEl = document.getElementById('ownerSidePfp');
+  if (user.pfp) {
+    pfpEl.innerHTML = `<img src="${user.pfp}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`;
+  } else {
+    pfpEl.innerHTML = (user.name || 'O')[0].toUpperCase();
+  }
+
+  // تعبئة حقول إعدادات الحساب
+  const pfpInput = document.getElementById('ownerPfpInput');
+  const nameInput = document.getElementById('ownerNameInput');
+  const bioInput = document.getElementById('ownerBioInput');
+  
+  if (pfpInput) pfpInput.value = user.pfp || '';
+  if (nameInput) nameInput.value = user.name || user.username || '';
+  if (bioInput) bioInput.value = user.bio || '';
+  previewPfpChange(user.pfp);
+
   renderProjects();
   renderDevs();
   updateStats();
@@ -424,15 +448,119 @@ function showOwnerDash(user) {
 function showUserDash(user) {
   const dash = document.getElementById('userDash');
   dash.classList.remove('hidden');
-  document.getElementById('userWelcomeText').textContent = `مرحباً، ${user.name || user.username} 👋`;
+  
+  document.getElementById('userWelcomeText').innerHTML = `مرحباً، ${user.name || user.username} <i class="fa-solid fa-hand-wave"></i>`;
+  const bioEl = document.getElementById('userBioDisplay_User');
+  if (bioEl) bioEl.textContent = user.bio || 'استعرض المشاريع وحمّل ما تحتاجه من أدوات برمجية.';
+
+  let pfpHtml = `<div class="su-avatar">${(user.name || 'U')[0].toUpperCase()}</div>`;
+  if (user.pfp) {
+    pfpHtml = `<div class="su-avatar"><img src="${user.pfp}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;"></div>`;
+  }
+
   document.getElementById('userSidebarInfo').innerHTML = `
-    <div class="su-avatar">${(user.name || 'U')[0].toUpperCase()}</div>
+    ${pfpHtml}
     <div class="su-info">
       <span class="su-name">${user.name || user.username}</span>
-      <span class="su-role" style="color:var(--accent2)">👤 User</span>
+      <span class="su-role" style="color:var(--accent2)"><i class="fa-solid fa-user"></i> User</span>
     </div>
   `;
   renderUserProjects();
+}
+
+// ══════════════════════════════════
+// PROFILE SETTINGS & AI MONITOR
+// ══════════════════════════════════
+function previewPfpChange(url) {
+  const prev = document.getElementById('pfpEditPreview');
+  if (!prev) return;
+  if (url && url.trim() !== '') {
+    prev.innerHTML = `<img src="${url}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`;
+  } else {
+    prev.innerHTML = '<i class="fa-solid fa-user"></i>';
+  }
+}
+
+async function handleSaveProfile() {
+  const newName = document.getElementById('ownerNameInput').value.trim();
+  const newBio = document.getElementById('ownerBioInput').value.trim();
+  const newPfp = document.getElementById('ownerPfpInput').value.trim();
+  const btn = document.getElementById('saveProfileBtn');
+  const errEl = document.getElementById('saveProfileError');
+  const sucEl = document.getElementById('saveProfileSuccess');
+
+  hideEl(errEl); hideEl(sucEl);
+
+  if (!newName) {
+    showErr(errEl, '<i class="fa-solid fa-triangle-exclamation"></i> الاسم لا يمكن أن يكون فارغاً!');
+    return;
+  }
+
+  setLoading(btn, true);
+
+  // الفحص الذكي بواسطة AI للبايو والاسم والصورة
+  try {
+    const isSafe = await aiCheckProfileContent(newName, newBio, newPfp);
+    if (!isSafe) {
+      setLoading(btn, false);
+      showErr(errEl, '<i class="fa-solid fa-ban"></i> تم رفض التعديل! الذكاء الاصطناعي اكتشف ألفاظاً أو محتوى غير لائق.');
+      addActivity(`تم رفض تعديل حساب بسبب محتوى غير لائق`, 'warn');
+      return;
+    }
+  } catch (e) {
+    // في حال فشل الاتصال، نسمح بالتعديل
+  }
+
+  // حفظ التعديلات
+  const savedSession = DB.get('pb_session');
+  let users = DB.get('pb_users') || [];
+  let currentUserIndex = users.findIndex(u => u.email === savedSession.email);
+
+  if (currentUserIndex > -1) {
+    users[currentUserIndex].name = newName;
+    users[currentUserIndex].bio = newBio;
+    users[currentUserIndex].pfp = newPfp;
+    DB.set('pb_users', users);
+    
+    // تحديث الواجهة مباشرة
+    if (users[currentUserIndex].role === 'owner') {
+      showOwnerDash(users[currentUserIndex]);
+    } else {
+      showUserDash(users[currentUserIndex]);
+    }
+
+    addActivity(`تم تحديث بيانات الحساب بنجاح`);
+    setLoading(btn, false);
+    sucEl.innerHTML = '<i class="fa-solid fa-check"></i> تم حفظ التعديلات بنجاح!';
+    sucEl.classList.remove('hidden');
+    setTimeout(() => hideEl(sucEl), 3000);
+  }
+}
+
+async function aiCheckProfileContent(name, bio, pfp) {
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: ANTHROPIC_MODEL,
+        max_tokens: 100,
+        messages: [{
+          role: 'user',
+          content: `أنت نظام رقابة ذكي صارم. افحص البيانات التالية وتأكد أنها لا تحتوي على سب، شتائم، ألفاظ بذيئة، أو أي إيحاءات إباحية/جنسية.
+الاسم: ${name}
+البايو: ${bio}
+رابط الصورة: ${pfp}
+أجب بكلمة واحدة فقط: SAFE أو UNSAFE`
+        }]
+      })
+    });
+    const data = await res.json();
+    const text = data.content?.[0]?.text?.toUpperCase() || '';
+    return !text.includes('UNSAFE');
+  } catch {
+    return true; 
+  }
 }
 
 // ══════════════════════════════════
@@ -481,11 +609,15 @@ function closeUserSidebar() {
 }
 
 // ══════════════════════════════════
-// PROJECTS
+// PROJECTS (Vector Icons Only)
 // ══════════════════════════════════
 const TYPE_ICONS = {
-  discord: '🤖', telegram: '✈️', whatsapp: '💬',
-  extension: '🧩', website: '🌐', other: '📦'
+  discord: '<i class="fa-brands fa-discord" style="color:#5865F2"></i>',
+  telegram: '<i class="fa-brands fa-telegram" style="color:#229ED9"></i>',
+  whatsapp: '<i class="fa-brands fa-whatsapp" style="color:#25D366"></i>',
+  extension: '<i class="fa-solid fa-puzzle-piece" style="color:#f59e0b"></i>',
+  website: '<i class="fa-solid fa-globe" style="color:#00d4ff"></i>',
+  other: '<i class="fa-solid fa-box" style="color:#94a3b8"></i>'
 };
 
 function getProjects() { return DB.get('pb_projects') || []; }
@@ -500,7 +632,7 @@ function renderProjects() {
   if (!projects.length) {
     grid.innerHTML = `
       <div class="empty-state">
-        <div class="es-icon">📦</div>
+        <div class="es-icon"><i class="fa-solid fa-box-open"></i></div>
         <div class="es-text">لا توجد مشاريع بعد</div>
         <button class="es-btn" onclick="showSection('secUpload', null)">ارفع أول مشروع</button>
       </div>`;
@@ -510,7 +642,7 @@ function renderProjects() {
   grid.innerHTML = projects.map((p, i) => `
     <div class="project-card" id="proj-${i}">
       <div class="pc-header">
-        <div class="pc-icon">${TYPE_ICONS[p.type] || '📦'}</div>
+        <div class="pc-icon">${TYPE_ICONS[p.type] || '<i class="fa-solid fa-box"></i>'}</div>
         <div>
           <div class="pc-name">${escHtml(p.name)}</div>
           <div class="pc-type">${p.type}</div>
@@ -521,9 +653,9 @@ function renderProjects() {
       </div>
       <div class="pc-footer">
         <button class="download-btn" onclick="downloadProject(${i})">
-          ⬇️ تحميل
+          <i class="fa-solid fa-download"></i> تحميل
         </button>
-        <button class="delete-btn" onclick="deleteProject(${i})">🗑</button>
+        <button class="delete-btn" onclick="deleteProject(${i})"><i class="fa-solid fa-trash-can"></i></button>
       </div>
     </div>
   `).join('');
@@ -534,13 +666,13 @@ function renderUserProjects() {
   if (!grid) return;
   const projects = getProjects();
   if (!projects.length) {
-    grid.innerHTML = `<div class="empty-state"><div class="es-icon">📦</div><div class="es-text">لا توجد مشاريع متاحة بعد</div></div>`;
+    grid.innerHTML = `<div class="empty-state"><div class="es-icon"><i class="fa-solid fa-box-open"></i></div><div class="es-text">لا توجد مشاريع متاحة بعد</div></div>`;
     return;
   }
   grid.innerHTML = projects.map((p, i) => `
     <div class="project-card">
       <div class="pc-header">
-        <div class="pc-icon">${TYPE_ICONS[p.type] || '📦'}</div>
+        <div class="pc-icon">${TYPE_ICONS[p.type] || '<i class="fa-solid fa-box"></i>'}</div>
         <div>
           <div class="pc-name">${escHtml(p.name)}</div>
           <div class="pc-type">${p.type}</div>
@@ -550,7 +682,7 @@ function renderUserProjects() {
         <div class="pc-desc">${escHtml(p.desc || 'لا يوجد وصف')}</div>
       </div>
       <div class="pc-footer">
-        <button class="download-btn" onclick="downloadProject(${i})">⬇️ تحميل</button>
+        <button class="download-btn" onclick="downloadProject(${i})"><i class="fa-solid fa-download"></i> تحميل</button>
       </div>
     </div>
   `).join('');
@@ -571,7 +703,6 @@ function downloadProject(i) {
   const p = projects[i];
   if (!p) return;
 
-  // Increment download counter
   let stats = DB.get('pb_stats') || { downloads: 0 };
   stats.downloads = (stats.downloads || 0) + 1;
   DB.set('pb_stats', stats);
@@ -579,7 +710,6 @@ function downloadProject(i) {
   addActivity(`تحميل: ${p.name}`);
 
   if (p.fileData && p.fileName) {
-    // Real file download
     const link = document.createElement('a');
     link.href = p.fileData;
     link.download = p.fileName;
@@ -587,7 +717,7 @@ function downloadProject(i) {
     link.click();
     document.body.removeChild(link);
   } else {
-    alert(`📦 المشروع: ${p.name}\n\nلا يوجد ملف مرفق لهذا المشروع.`);
+    alert(`المشروع: ${p.name}\n\nلا يوجد ملف مرفق لهذا المشروع.`);
   }
 }
 // ══════════════════════════════════
@@ -651,7 +781,7 @@ async function handleUpload() {
 
   hideEl(errEl); hideEl(sucEl);
 
-  if (!name) { showErr(errEl, '⚠️ الرجاء إدخال اسم المشروع'); return; }
+  if (!name) { showErr(errEl, '<i class="fa-solid fa-triangle-exclamation"></i> الرجاء إدخال اسم المشروع'); return; }
 
   setLoading(btn, true);
 
@@ -685,8 +815,8 @@ async function handleUpload() {
   setLoading(btn, false);
 
   if (!scanPassed) {
-    showErr(errEl, `🤖 AI رفض نشر المشروع: ${scanReason}`);
-    addActivity(`رفض AI: ${name}`, 'warn');
+    showErr(errEl, `<i class="fa-solid fa-ban"></i> AI رفض نشر المشروع: ${scanReason}`);
+    addActivity(`رفض AI نشر: ${name}`, 'warn');
     return;
   }
 
@@ -703,7 +833,7 @@ async function handleUpload() {
   document.getElementById('projName').value = '';
   document.getElementById('projDesc').value = '';
 
-  sucEl.textContent = `✅ تم نشر المشروع "${name}" بنجاح! AI وافق عليه.`;
+  sucEl.innerHTML = `<i class="fa-solid fa-check-double"></i> تم نشر المشروع "${name}" بنجاح! AI وافق عليه.`;
   sucEl.classList.remove('hidden');
   addActivity(`نشر مشروع: ${name}`);
   updateStats();
@@ -755,11 +885,11 @@ async function runAIScan() {
     { t: 'تهيئة نماذج الـ AI...', c: 'st-wait', d: 400 },
     { t: 'فحص قاعدة البيانات...', c: 'st-ok', d: 600 },
     { t: 'تحليل البروتوكولات...', c: 'st-ok', d: 800 },
-    { t: 'البحث عن التهديدات...', c: 'st-warn', d: 1200 },
+    { t: '<i class="fa-solid fa-magnifying-glass"></i> البحث عن التهديدات...', c: 'st-warn', d: 1200 },
     { t: 'فحص الكود المشبوه...', c: 'st-wait', d: 1600 },
     { t: 'مراجعة قاعدة الفيروسات...', c: 'st-ok', d: 2000 },
-    { t: '✓ لا تهديدات موجودة', c: 'st-ok', d: 2600 },
-    { t: '✓ النظام آمن', c: 'st-ok', d: 3000 },
+    { t: '<i class="fa-solid fa-shield-check"></i> لا تهديدات موجودة', c: 'st-ok', d: 2600 },
+    { t: '<i class="fa-solid fa-lock"></i> النظام آمن', c: 'st-ok', d: 3000 },
     { t: '══ الفحص مكتمل ══', c: 'st-ok', d: 3400 },
   ];
 
@@ -798,7 +928,7 @@ async function runAIScan() {
   } catch {
     const div2 = document.createElement('div');
     div2.className = 'st-line';
-    div2.innerHTML = `<span class="st-prompt">AI</span><span class="st-ok">✓ النظام آمن — لا تهديدات</span>`;
+    div2.innerHTML = `<span class="st-prompt">AI</span><span class="st-ok"><i class="fa-solid fa-check"></i> النظام آمن — لا تهديدات</span>`;
     terminal.appendChild(div2);
   }
 
@@ -815,12 +945,12 @@ function renderDevs() {
   document.getElementById('statDevs').textContent = devs.length;
 
   if (!devs.length) {
-    list.innerHTML = `<div class="empty-state"><div class="es-icon">👨‍💻</div><div class="es-text">لا يوجد مطورين مسجلين بعد</div></div>`;
+    list.innerHTML = `<div class="empty-state"><div class="es-icon"><i class="fa-solid fa-users-slash"></i></div><div class="es-text">لا يوجد مطورين مسجلين بعد</div></div>`;
     return;
   }
   list.innerHTML = devs.map(d => `
     <div class="activity-item">
-      <span>👨‍💻</span>
+      <span><i class="fa-solid fa-user-astronaut"></i></span>
       <span>${escHtml(d.name)}</span>
       <span style="color:var(--text3)">${escHtml(d.email)}</span>
       <span class="ai-time">${formatDate(d.joinedAt)}</span>
@@ -849,7 +979,7 @@ function renderActivity() {
   }
   list.innerHTML = log.slice(0, 10).map(a => `
     <div class="activity-item">
-      <span class="ai-icon">${a.type === 'warn' ? '⚠️' : '✅'}</span>
+      <span class="ai-icon">${a.type === 'warn' ? '<i class="fa-solid fa-triangle-exclamation" style="color:var(--owner)"></i>' : '<i class="fa-solid fa-check" style="color:var(--green)"></i>'}</span>
       <span>${escHtml(a.msg)}</span>
       <span class="ai-time">${formatDate(a.time)}</span>
     </div>
@@ -893,7 +1023,7 @@ function clearAllData() {
   renderProjects();
   renderDevs();
   updateStats();
-  alert('✅ تم مسح البيانات');
+  alert('تم مسح البيانات بنجاح');
 }
 
 // ══════════════════════════════════
@@ -902,8 +1032,13 @@ function clearAllData() {
 function togglePass(id, btn) {
   const input = document.getElementById(id);
   if (!input) return;
-  if (input.type === 'password') { input.type = 'text'; btn.textContent = '🙈'; }
-  else { input.type = 'password'; btn.textContent = '👁'; }
+  if (input.type === 'password') { 
+    input.type = 'text'; 
+    btn.innerHTML = '<i class="fa-solid fa-eye-slash"></i>'; 
+  } else { 
+    input.type = 'password'; 
+    btn.innerHTML = '<i class="fa-solid fa-eye"></i>'; 
+  }
 }
 
 // ══════════════════════════════════
@@ -935,7 +1070,7 @@ function setLoading(btn, loading) {
 
 function showErr(el, msg) {
   if (!el) return;
-  el.textContent = msg;
+  el.innerHTML = msg; // Changed to innerHTML to process FontAwesome Vector Icons correctly
   el.classList.remove('hidden');
 }
 function hideEl(el) { el?.classList.add('hidden'); }
