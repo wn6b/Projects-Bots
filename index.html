@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Projects Bots — وائل | Wano</title>
   <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Space+Mono:wght@400;700&family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet" />
 </head>
 <body>
@@ -12,12 +13,24 @@
 <div id="loader" class="loader-screen">
   <div class="loader-bg"></div>
   <div class="loader-content">
-    <div class="loader-logo">
-      <div class="logo-ring r1"></div>
-      <div class="logo-ring r2"></div>
-      <div class="logo-ring r3"></div>
-      <span class="logo-text">PB</span>
+    
+    <div class="loader-logo-svg">
+      <svg viewBox="0 0 100 100" class="advanced-logo" width="90" height="90">
+        <defs>
+          <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:var(--accent);stop-opacity:1" />
+            <stop offset="100%" style="stop-color:var(--accent3);stop-opacity:1" />
+          </linearGradient>
+          <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="5" result="blur" />
+            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+          </filter>
+        </defs>
+        <polygon points="50,5 95,27.5 95,72.5 50,95 5,72.5 5,27.5" fill="none" stroke="url(#grad1)" stroke-width="3" class="hex-path"></polygon>
+        <path d="M35,50 L50,25 L65,50 L50,75 Z" fill="url(#grad1)" filter="url(#glow)" class="inner-core"></path>
+      </svg>
     </div>
+
     <div class="loader-brand">Projects Bots</div>
     <div class="loader-sub">by وائل | Wano</div>
     <div class="loader-bar-wrap">
@@ -41,8 +54,10 @@
     <div class="auth-panel-inner">
       <div class="auth-logo">
         <div class="auth-logo-icon">
-          <div class="al-ring"></div>
-          <span>PB</span>
+          <svg viewBox="0 0 50 50" width="40" height="40" class="auth-svg">
+            <polygon points="25,2 48,14 48,36 25,48 2,36 2,14" fill="none" stroke="var(--accent)" stroke-width="2"></polygon>
+            <path d="M15,25 L25,10 L35,25 L25,40 Z" fill="var(--accent2)"></path>
+          </svg>
         </div>
         <div class="auth-logo-text">
           <div class="alt-main">Projects Bots</div>
@@ -73,7 +88,9 @@
           <label>كلمة المرور</label>
           <div class="field-wrap">
             <input type="password" id="loginPass" placeholder="••••••••••" autocomplete="current-password" />
-            <button class="toggle-pass" onclick="togglePass('loginPass', this)">👁</button>
+            <button class="toggle-pass" onclick="togglePass('loginPass', this)">
+              <i class="fa-solid fa-eye"></i>
+            </button>
             <div class="field-glow"></div>
           </div>
         </div>
@@ -111,7 +128,9 @@
           <label>كلمة المرور</label>
           <div class="field-wrap">
             <input type="password" id="regPass" placeholder="••••••••••" />
-            <button class="toggle-pass" onclick="togglePass('regPass', this)">👁</button>
+            <button class="toggle-pass" onclick="togglePass('regPass', this)">
+              <i class="fa-solid fa-eye"></i>
+            </button>
             <div class="field-glow"></div>
           </div>
         </div>
@@ -123,7 +142,7 @@
           </div>
         </div>
         <div class="reg-note">
-          <span class="reg-note-icon">🤖</span>
+          <span class="reg-note-icon"><i class="fa-solid fa-robot"></i></span>
           سيتم مراجعة حسابك بواسطة الـ AI قبل التفعيل
         </div>
         <button class="auth-btn" id="registerBtn" onclick="handleRegister()">
@@ -135,7 +154,7 @@
       </div>
 
       <div class="auth-footer">
-        <span>© 2025 وائل | Wano — wn6b</span>
+        <span>© 2026 وائل | Wano — wn6b</span>
       </div>
     </div>
   </div>
@@ -143,7 +162,11 @@
 <div id="ownerDash" class="dashboard hidden">
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-logo">
-      <div class="sl-icon">PB</div>
+      <div class="sl-icon">
+        <svg viewBox="0 0 50 50" width="25" height="25">
+          <polygon points="25,2 48,14 48,36 25,48 2,36 2,14" fill="none" stroke="white" stroke-width="3"></polygon>
+        </svg>
+      </div>
       <div class="sl-text">
         <span>Projects Bots</span>
         <small>Owner Panel</small>
@@ -151,51 +174,55 @@
     </div>
     <nav class="sidebar-nav">
       <a href="#" class="snav-item active" onclick="showSection('secHome', this)">
-        <span class="snav-icon">🏠</span> الرئيسية
+        <span class="snav-icon"><i class="fa-solid fa-house"></i></span> الرئيسية
       </a>
       <a href="#" class="snav-item" onclick="showSection('secProjects', this)">
-        <span class="snav-icon">📦</span> المشاريع
+        <span class="snav-icon"><i class="fa-solid fa-box-archive"></i></span> المشاريع
       </a>
       <a href="#" class="snav-item" onclick="showSection('secDevelopers', this)">
-        <span class="snav-icon">👨‍💻</span> المطورين
+        <span class="snav-icon"><i class="fa-solid fa-code"></i></span> المطورين
       </a>
       <a href="#" class="snav-item" onclick="showSection('secUpload', this)">
-        <span class="snav-icon">⬆️</span> رفع مشروع
+        <span class="snav-icon"><i class="fa-solid fa-cloud-arrow-up"></i></span> رفع مشروع
       </a>
       <a href="#" class="snav-item" onclick="showSection('secAI', this)">
-        <span class="snav-icon">🤖</span> AI Scanner
+        <span class="snav-icon"><i class="fa-solid fa-microchip"></i></span> AI Scanner
       </a>
       <a href="#" class="snav-item" onclick="showSection('secSettings', this)">
-        <span class="snav-icon">⚙️</span> الإعدادات
+        <span class="snav-icon"><i class="fa-solid fa-user-gear"></i></span> الإعدادات
       </a>
     </nav>
     <div class="sidebar-bottom">
-      <div class="sidebar-user">
-        <div class="su-avatar">O</div>
+      <div class="sidebar-user" id="ownerSidebarInfo">
+        <div class="su-avatar" id="ownerSidePfp">O</div>
         <div class="su-info">
-          <span class="su-name">وائل | Wano</span>
-          <span class="su-role owner-badge">👑 Owner</span>
+          <span class="su-name" id="ownerSideName">وائل | Wano</span>
+          <span class="su-role owner-badge"><i class="fa-solid fa-crown"></i> Owner</span>
         </div>
       </div>
-      <button class="logout-btn" onclick="handleLogout()">تسجيل الخروج</button>
+      <button class="logout-btn" onclick="handleLogout()">
+        <i class="fa-solid fa-right-from-bracket"></i> تسجيل الخروج
+      </button>
     </div>
   </aside>
 
   <main class="dash-main">
     <header class="dash-header">
-      <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+      <button class="menu-toggle" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
       <div class="dash-header-title" id="pageTitle">الرئيسية</div>
       <div class="dash-header-actions">
         <div class="ai-status"><div class="ai-dot"></div> AI Online</div>
-        <div class="notif-btn" onclick="showNotif()">🔔 <span class="notif-badge" id="notifBadge">0</span></div>
+        <div class="notif-btn" onclick="showNotif()">
+          <i class="fa-solid fa-bell"></i> <span class="notif-badge" id="notifBadge">0</span>
+        </div>
       </div>
     </header>
 
     <section id="secHome" class="dash-section active">
       <div class="welcome-hero">
         <div class="wh-text">
-          <h1>مرحباً، وائل 👑</h1>
-          <p>أنت على لوحة تحكم الـ Owner. كل شيء تحت سيطرتك.</p>
+          <h1 id="welcomeOwnerHeader">مرحباً، وائل <i class="fa-solid fa-crown" style="color:var(--owner)"></i></h1>
+          <p id="ownerBioDisplay">أنت على لوحة تحكم الـ Owner. كل شيء تحت سيطرتك.</p>
         </div>
         <div class="wh-stats">
           <div class="stat-card">
@@ -220,16 +247,16 @@
         <h2>إجراءات سريعة</h2>
         <div class="qa-grid">
           <button class="qa-btn" onclick="showSection('secUpload', null)">
-            <span>⬆️</span> رفع مشروع جديد
+            <i class="fa-solid fa-upload"></i> رفع مشروع جديد
           </button>
           <button class="qa-btn" onclick="showSection('secDevelopers', null)">
-            <span>👨‍💻</span> إدارة المطورين
+            <i class="fa-solid fa-users-gear"></i> إدارة المطورين
           </button>
           <button class="qa-btn" onclick="showSection('secAI', null)">
-            <span>🤖</span> فحص AI
+            <i class="fa-solid fa-shield-virus"></i> فحص AI
           </button>
           <button class="qa-btn" onclick="window.open('https://github.com/wn6b','_blank')">
-            <span>🐙</span> GitHub
+            <i class="fa-brands fa-github"></i> GitHub
           </button>
         </div>
       </div>
@@ -243,39 +270,109 @@
 
     <section id="secProjects" class="dash-section">
       <div class="section-header">
-        <h2>📦 المشاريع</h2>
-        <button class="add-btn" onclick="showSection('secUpload', null)">+ إضافة مشروع</button>
+        <h2><i class="fa-solid fa-boxes-stacked"></i> المشاريع</h2>
+        <button class="add-btn" onclick="showSection('secUpload', null)">
+          <i class="fa-solid fa-plus"></i> إضافة مشروع
+        </button>
       </div>
       <div id="projectsGrid" class="projects-grid">
         <div class="empty-state">
-          <div class="es-icon">📦</div>
+          <div class="es-icon"><i class="fa-solid fa-box-open"></i></div>
           <div class="es-text">لا توجد مشاريع بعد</div>
           <button class="es-btn" onclick="showSection('secUpload', null)">ارفع أول مشروع</button>
         </div>
       </div>
     </section>
 
+    <section id="secSettings" class="dash-section">
+      <div class="section-header">
+        <h2><i class="fa-solid fa-gears"></i> الإعدادات</h2>
+      </div>
+      <div class="settings-container">
+        <div class="settings-card">
+          <h3><i class="fa-solid fa-user-pen"></i> تخصيص الحساب</h3>
+          <div class="pfp-edit-wrap">
+            <div class="pfp-preview-large" id="pfpEditPreview">O</div>
+            <div class="pfp-inputs">
+              <label>رابط صورة الحساب (PFP)</label>
+              <div class="field-wrap">
+                <input type="text" id="ownerPfpInput" placeholder="https://url-to-image.png" oninput="previewPfpChange(this.value)" />
+                <div class="field-glow"></div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="field-group">
+            <label>اسم الحساب</label>
+            <div class="field-wrap">
+              <input type="text" id="ownerNameInput" placeholder="اسمك الجديد" />
+              <div class="field-glow"></div>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label>البايو (Bio)</label>
+            <div class="field-wrap">
+              <textarea id="ownerBioInput" placeholder="اكتب شيئاً عنك..." rows="3"></textarea>
+              <div class="field-glow"></div>
+            </div>
+          </div>
+
+          <button class="auth-btn" onclick="handleSaveProfile()" id="saveProfileBtn">
+            <span class="btn-text"><i class="fa-solid fa-floppy-disk"></i> حفظ التعديلات</span>
+            <div class="btn-loader hidden"></div>
+          </button>
+          <div class="auth-error hidden" id="saveProfileError"></div>
+          <div class="auth-success hidden" id="saveProfileSuccess"></div>
+        </div>
+
+        <div class="settings-card">
+          <h3><i class="fa-solid fa-share-nodes"></i> حسابات التواصل</h3>
+          <div class="vector-social-grid">
+            <a href="https://github.com/wn6b" target="_blank" class="v-social github" title="GitHub">
+              <i class="fa-brands fa-github"></i>
+            </a>
+            <a href="https://discord.com" target="_blank" class="v-social discord" title="Discord">
+              <i class="fa-brands fa-discord"></i>
+            </a>
+            <a href="https://tiktok.com/@w_n6b" target="_blank" class="v-social tiktok" title="TikTok">
+              <i class="fa-brands fa-tiktok"></i>
+            </a>
+            <a href="https://youtube.com/@wn5b" target="_blank" class="v-social youtube" title="YouTube">
+              <i class="fa-brands fa-youtube"></i>
+            </a>
+          </div>
+        </div>
+
+        <div class="settings-card danger-card">
+          <h3><i class="fa-solid fa-triangle-exclamation"></i> منطقة الخطر</h3>
+          <button class="danger-btn" onclick="clearAllData()">
+            <i class="fa-solid fa-trash-can"></i> مسح كل البيانات
+          </button>
+        </div>
+      </div>
+    </section>
     <section id="secDevelopers" class="dash-section">
       <div class="section-header">
-        <h2>👨‍💻 المطورين</h2>
+        <h2><i class="fa-solid fa-laptop-code"></i> المطورين</h2>
         <a href="https://projects-developers.github.io" target="_blank" class="dev-portal-btn">
-          🌐 بوابة المطورين
+          <i class="fa-solid fa-up-right-from-square"></i> بوابة المطورين
         </a>
       </div>
       <div class="dev-info-card">
-        <div class="dic-icon">🔗</div>
+        <div class="dic-icon"><i class="fa-solid fa-link"></i></div>
         <div class="dic-content">
           <h3>Projects Developers</h3>
           <p>الموقع الثاني المخصص للمطورين لرفع مشاريعهم والانضمام للمنصة.</p>
           <a href="https://projects-developers.github.io" target="_blank" class="dic-link-btn">
-            انتقل لبوابة المطورين ←
+            انتقل لبوابة المطورين <i class="fa-solid fa-arrow-left"></i>
           </a>
         </div>
       </div>
       <h3 style="margin-top:2rem">المطورين المسجلين</h3>
       <div id="devsList" class="devs-list">
         <div class="empty-state">
-          <div class="es-icon">👨‍💻</div>
+          <div class="es-icon"><i class="fa-solid fa-users-slash"></i></div>
           <div class="es-text">لا يوجد مطورين بعد</div>
         </div>
       </div>
@@ -283,7 +380,7 @@
 
     <section id="secUpload" class="dash-section">
       <div class="section-header">
-        <h2>⬆️ رفع مشروع جديد</h2>
+        <h2><i class="fa-solid fa-file-import"></i> رفع مشروع جديد</h2>
       </div>
       <div class="upload-card">
         <div class="field-group">
@@ -317,26 +414,26 @@
         <div class="field-group">
           <label>رفع الملف</label>
           <div class="drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
-            <div class="dz-icon">📁</div>
+            <div class="dz-icon"><i class="fa-solid fa-folder-open"></i></div>
             <div class="dz-text">اسحب الملف هنا أو اضغط للاختيار</div>
             <div class="dz-sub">ZIP, RAR, JS, HTML — حد أقصى 50MB</div>
             <input type="file" id="fileInput" hidden onchange="handleFileSelect(this)" />
           </div>
           <div class="file-preview hidden" id="filePreview">
-            <div class="fp-icon">📄</div>
+            <div class="fp-icon"><i class="fa-solid fa-file-code"></i></div>
             <div class="fp-info">
               <span id="fpName">-</span>
               <span id="fpSize">-</span>
             </div>
-            <button onclick="clearFile()">✕</button>
+            <button onclick="clearFile()"><i class="fa-solid fa-xmark"></i></button>
           </div>
         </div>
         <div class="ai-scan-status hidden" id="aiScanStatus">
-          <div class="ass-icon spin">🤖</div>
+          <div class="ass-icon spin"><i class="fa-solid fa-microchip"></i></div>
           <div class="ass-text" id="aiScanText">AI يفحص الملف...</div>
         </div>
         <button class="auth-btn" onclick="handleUpload()" id="uploadBtn">
-          <span class="btn-text">رفع ونشر المشروع</span>
+          <span class="btn-text"><i class="fa-solid fa-paper-plane"></i> رفع ونشر المشروع</span>
           <div class="btn-loader hidden"></div>
         </button>
         <div class="upload-success hidden" id="uploadSuccess"></div>
@@ -346,21 +443,24 @@
 
     <section id="secAI" class="dash-section">
       <div class="section-header">
-        <h2>🤖 AI Scanner</h2>
+        <h2><i class="fa-solid fa-brain"></i> AI Scanner</h2>
       </div>
       <div class="ai-scanner-card">
         <div class="asc-header">
-          <div class="asc-pulse"></div>
+          <div class="asc-pulse-svg">
+            <svg viewBox="0 0 100 100" width="60" height="60">
+              <circle cx="50" cy="50" r="45" fill="none" stroke="var(--accent)" stroke-width="2" class="pulse-ring"></circle>
+              <path d="M30,50 L45,50 L50,30 L55,70 L60,50 L70,50" fill="none" stroke="var(--accent)" stroke-width="3"></path>
+            </svg>
+          </div>
           <h3>فحص ذكي للملفات</h3>
-          <p>يستخدم الـ AI تحليل متقدم للكشف عن الفيروسات والمحتوى الضار</p>
+          <p>يستخدم الـ AI تحليل متقدم للكشف عن التهديدات البرمجية</p>
         </div>
         <div class="asc-features">
-          <div class="ascf-item"><span>🛡️</span> كشف الفيروسات</div>
-          <div class="ascf-item"><span>🔍</span> تحليل الكود</div>
-          <div class="ascf-item"><span>⚠️</span> كشف المحتوى الضار</div>
-          <div class="ascf-item"><span>✅</span> التحقق من الأمان</div>
-          <div class="ascf-item"><span>🚫</span> رفض المحتوى المنتهك</div>
-          <div class="ascf-item"><span>📊</span> تقرير مفصل</div>
+          <div class="ascf-item"><i class="fa-solid fa-shield-halved"></i> كشف الفيروسات</div>
+          <div class="ascf-item"><i class="fa-solid fa-magnifying-glass-chart"></i> تحليل الكود</div>
+          <div class="ascf-item"><i class="fa-solid fa-user-shield"></i> التحقق من الأمان</div>
+          <div class="ascf-item"><i class="fa-solid fa-ban"></i> حظر التهديدات</div>
         </div>
         <div class="scan-terminal" id="scanTerminal">
           <div class="st-header">
@@ -373,49 +473,9 @@
             <div class="st-line"><span class="st-prompt">$</span> <span class="st-wait">جاهز للفحص...</span></div>
           </div>
         </div>
-        <button class="auth-btn" onclick="runAIScan()">تشغيل الفحص</button>
-      </div>
-    </section>
-
-    <section id="secSettings" class="dash-section">
-      <div class="section-header">
-        <h2>⚙️ الإعدادات</h2>
-      </div>
-      <div class="settings-grid">
-        <div class="setting-card">
-          <h3>👤 معلومات الحساب</h3>
-          <div class="setting-row">
-            <span>الاسم</span><strong>وائل | Wano</strong>
-          </div>
-          <div class="setting-row">
-            <span>الدور</span><strong class="owner-badge">👑 Owner</strong>
-          </div>
-          <div class="setting-row">
-            <span>اليوزر</span><strong>@wn6b</strong>
-          </div>
-        </div>
-        <div class="setting-card">
-          <h3>🔗 حسابات التواصل</h3>
-          <div class="social-links">
-            <a href="https://github.com/wn6b" target="_blank" class="sl-link github">🐙 GitHub: wn6b</a>
-                        <a href="https://discord.com" target="_blank" class="sl-link discord">💬 Discord: wn6b</a>
-            <a href="https://tiktok.com/@w_n6b" target="_blank" class="sl-link tiktok">🎵 TikTok: w_n6b</a>
-            <a href="https://youtube.com/@wn5b" target="_blank" class="sl-link youtube">▶️ YouTube: wn5b</a>
-          </div>
-        </div>
-        <div class="setting-card">
-          <h3>🤖 إعدادات AI</h3>
-          <div class="setting-row">
-            <span>نموذج الفحص</span><strong>Claude AI</strong>
-          </div>
-          <div class="setting-row">
-            <span>حالة AI</span><strong class="text-green">● نشط</strong>
-          </div>
-        </div>
-        <div class="setting-card danger-card">
-          <h3>⚠️ منطقة الخطر</h3>
-          <button class="danger-btn" onclick="clearAllData()">مسح كل البيانات</button>
-        </div>
+        <button class="auth-btn" onclick="runAIScan()">
+          <span class="btn-text"><i class="fa-solid fa-play"></i> تشغيل الفحص</span>
+        </button>
       </div>
     </section>
   </main>
@@ -424,7 +484,11 @@
 <div id="userDash" class="dashboard hidden">
   <aside class="sidebar" id="userSidebar">
     <div class="sidebar-logo">
-      <div class="sl-icon">PB</div>
+      <div class="sl-icon">
+        <svg viewBox="0 0 50 50" width="25" height="25">
+          <polygon points="25,2 48,14 48,36 25,48 2,36 2,14" fill="none" stroke="white" stroke-width="3"></polygon>
+        </svg>
+      </div>
       <div class="sl-text">
         <span>Projects Bots</span>
         <small>User Panel</small>
@@ -432,23 +496,27 @@
     </div>
     <nav class="sidebar-nav">
       <a href="#" class="snav-item active" onclick="showUserSection('usecHome', this)">
-        <span class="snav-icon">🏠</span> الرئيسية
+        <span class="snav-icon"><i class="fa-solid fa-house"></i></span> الرئيسية
       </a>
       <a href="#" class="snav-item" onclick="showUserSection('usecProjects', this)">
-        <span class="snav-icon">📦</span> المشاريع
+        <span class="snav-icon"><i class="fa-solid fa-folder-tree"></i></span> المشاريع
       </a>
       <a href="#" class="snav-item" onclick="showUserSection('usecDev', this)">
-        <span class="snav-icon">👨‍💻</span> Developers
+        <span class="snav-icon"><i class="fa-solid fa-terminal"></i></span> Developers
       </a>
     </nav>
     <div class="sidebar-bottom">
-      <div class="sidebar-user" id="userSidebarInfo"></div>
-      <button class="logout-btn" onclick="handleLogout()">تسجيل الخروج</button>
+      <div class="sidebar-user" id="userSidebarInfo">
+        </div>
+      <button class="logout-btn" onclick="handleLogout()">
+        <i class="fa-solid fa-power-off"></i> تسجيل الخروج
+      </button>
     </div>
   </aside>
+
   <main class="dash-main">
     <header class="dash-header">
-      <button class="menu-toggle" onclick="toggleUserSidebar()">☰</button>
+      <button class="menu-toggle" onclick="toggleUserSidebar()"><i class="fa-solid fa-bars"></i></button>
       <div class="dash-header-title" id="userPageTitle">الرئيسية</div>
       <div class="dash-header-actions">
         <div class="ai-status"><div class="ai-dot"></div> AI Online</div>
@@ -459,35 +527,33 @@
       <div class="welcome-hero">
         <div class="wh-text">
           <h1 id="userWelcomeText">مرحباً 👋</h1>
-          <p>استعرض المشاريع وحمّل ما تحتاجه</p>
+          <p id="userBioDisplay_User">استعرض المشاريع وحمّل ما تحتاجه من أدوات برمجية.</p>
         </div>
       </div>
       <div class="quick-actions">
         <h2>استكشف</h2>
         <div class="qa-grid">
           <button class="qa-btn" onclick="showUserSection('usecProjects', null)">
-            <span>📦</span> استعراض المشاريع
+            <i class="fa-solid fa-layer-group"></i> استعراض المشاريع
           </button>
           <button class="qa-btn" onclick="showUserSection('usecDev', null)">
-            <span>👨‍💻</span> بوابة المطورين
+            <i class="fa-solid fa-code-branch"></i> بوابة المطورين
           </button>
-          <button class="qa-btn" onclick="window.open('https://github.com/wn6b','_blank')">
-            <span>🐙</span> GitHub الرسمي
-          </button>
-          <button class="qa-btn" onclick="window.open('https://discord.com','_blank')">
-            <span>💬</span> Discord: wn6b
-          </button>
+          <div class="header-social-icons">
+            <a href="https://github.com/wn6b" target="_blank" class="v-social-mini"><i class="fa-brands fa-github"></i></a>
+            <a href="https://discord.com" target="_blank" class="v-social-mini"><i class="fa-brands fa-discord"></i></a>
+          </div>
         </div>
       </div>
     </section>
 
     <section id="usecProjects" class="dash-section">
       <div class="section-header">
-        <h2>📦 المشاريع المتاحة</h2>
+        <h2><i class="fa-solid fa-cubes"></i> المشاريع المتاحة</h2>
       </div>
       <div id="userProjectsGrid" class="projects-grid">
         <div class="empty-state">
-          <div class="es-icon">📦</div>
+          <div class="es-icon"><i class="fa-solid fa-box-open"></i></div>
           <div class="es-text">لا توجد مشاريع متاحة بعد</div>
         </div>
       </div>
@@ -495,22 +561,15 @@
 
     <section id="usecDev" class="dash-section">
       <div class="section-header">
-        <h2>👨‍💻 بوابة المطورين</h2>
+        <h2><i class="fa-solid fa-rocket"></i> بوابة المطورين</h2>
       </div>
       <div class="dev-info-card">
-        <div class="dic-icon">🚀</div>
+        <div class="dic-icon"><i class="fa-solid fa-user-astronaut"></i></div>
         <div class="dic-content">
           <h3>انضم كمطور</h3>
           <p>هل تريد نشر مشاريعك على منصة Projects Bots؟ انتقل لبوابة المطورين وأكمل التسجيل!</p>
-          <div class="dev-steps">
-            <div class="ds-step"><span>1</span> سجّل في بوابة المطورين</div>
-            <div class="ds-step"><span>2</span> أكمل بياناتك كاملة</div>
-            <div class="ds-step"><span>3</span> تحقق من الـ CAPTCHA</div>
-            <div class="ds-step"><span>4</span> انتظر موافقة الـ AI</div>
-            <div class="ds-step"><span>5</span> ابدأ نشر مشاريعك!</div>
-          </div>
           <a href="https://projects-developers.github.io" target="_blank" class="dic-link-btn big">
-            🌐 انتقل لبوابة المطورين الآن ←
+            انتقل لبوابة المطورين الآن <i class="fa-solid fa-arrow-left"></i>
           </a>
         </div>
       </div>
@@ -520,7 +579,7 @@
 
 <div class="notif-panel hidden" id="notifPanel" onclick="hideNotif()">
   <div class="np-inner" onclick="event.stopPropagation()">
-    <div class="np-header">🔔 الإشعارات</div>
+    <div class="np-header"><i class="fa-solid fa-bell"></i> الإشعارات</div>
     <div id="notifList" class="np-list">
       <div class="np-empty">لا توجد إشعارات</div>
     </div>
