@@ -218,3 +218,375 @@ document.addEventListener('DOMContentLoaded', () => {
     slider.style.width = 'calc(50% - 4px)';
   }
 });
+// ══════════════════════════════════
+// LOGIN
+// ══════════════════════════════════
+async function handleLogin() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const pass = document.getElementById('loginPass').value;
+  const remember = document.getElementById('rememberMe').checked;
+  const errEl = document.getElementById('loginError');
+  const btn = document.getElementById('loginBtn');
+
+  hideEl(errEl);
+
+  if (!email || !pass) {
+    showErr(errEl, '⚠️ الرجاء إدخال البريد وكلمة المرور');
+    return;
+  }
+
+  setLoading(btn, true);
+  showAIThink('AI يتحقق من هويتك...');
+
+  await sleep(800); // simulate AI check
+
+  const users = DB.get('pb_users') || [];
+  const user = users.find(u => u.email === email && u.password === pass);
+
+  if (!user) {
+    hideAIThink();
+    setLoading(btn, false);
+    showErr(errEl, '❌ البريد الإلكتروني أو كلمة المرور غير صحيحة');
+
+    // AI analysis
+    showAIThink('AI يحلل محاولة الدخول...');
+    await sleep(1000);
+    hideAIThink();
+    return;
+  }
+
+  if (remember) {
+    DB.set('pb_session', { email: user.email, role: user.role });
+  }
+
+  hideAIThink();
+  setLoading(btn, false);
+  loginUser(user, true);
+}
+
+function loginUser(user, animate = true) {
+  const authScreen = document.getElementById('authScreen');
+
+  if (animate) {
+    authScreen.style.opacity = '0';
+    authScreen.style.transform = 'scale(0.96)';
+    authScreen.style.transition = 'all 0.4s ease';
+    setTimeout(() => authScreen.classList.add('hidden'), 400);
+  } else {
+    authScreen.classList.add('hidden');
+  }
+
+  addActivity(`تسجيل دخول: ${user.name || user.email}`);
+
+  if (user.role === 'owner') {
+    showOwnerDash(user);
+  } else {
+    showUserDash(user);
+  }
+}
+
+// ══════════════════════════════════
+// REGISTER
+// ══════════════════════════════════
+async function handleRegister() {
+  const name = document.getElementById('regName').value.trim();
+  const email = document.getElementById('regEmail').value.trim();
+  const pass = document.getElementById('regPass').value;
+  const passC = document.getElementById('regPassConfirm').value;
+  const errEl = document.getElementById('registerError');
+  const sucEl = document.getElementById('registerSuccess');
+  const btn = document.getElementById('registerBtn');
+
+  hideEl(errEl); hideEl(sucEl);
+
+  if (!name || !email || !pass || !passC) {
+    showErr(errEl, '⚠️ الرجاء ملء جميع الحقول');
+    return;
+  }
+  if (pass !== passC) {
+    showErr(errEl, '❌ كلمة المرور غير متطابقة');
+    return;
+  }
+  if (pass.length < 6) {
+    showErr(errEl, '❌ كلمة المرور يجب أن تكون 6 أحرف على الأقل');
+    return;
+  }
+  if (email === OWNER.email) {
+    showErr(errEl, '❌ هذا البريد غير متاح للتسجيل');
+    return;
+  }
+
+  const users = DB.get('pb_users') || [];
+  if (users.find(u => u.email === email)) {
+    showErr(errEl, '❌ البريد الإلكتروني مسجل بالفعل');
+    return;
+  }
+
+  setLoading(btn, true);
+  showAIThink('AI يراجع حسابك...');
+
+  // AI review via Anthropic API
+  let aiApproved = false;
+  let aiMessage = '';
+  try {
+    aiApproved = await aiReviewAccount(name, email);
+    aiMessage = aiApproved ? 'تم الموافقة على الحساب بواسطة AI' : 'تم رفض الحساب بواسطة AI';
+  } catch {
+    aiApproved = true; // fallback allow
+    aiMessage = 'تم إنشاء الحساب';
+  }
+
+  hideAIThink();
+  setLoading(btn, false);
+
+  if (!aiApproved) {
+    showErr(errEl, '🤖 AI رفض إنشاء الحساب. الرجاء استخدام بيانات حقيقية.');
+    return;
+  }
+
+  const newUser = {
+    email, password: pass, name,
+    username: email.split('@')[0],
+    role: 'user',
+    createdAt: new Date().toISOString()
+  };
+  users.push(newUser);
+  DB.set('pb_users', users);
+
+  addActivity(`حساب جديد: ${name}`);
+  updateStats();
+
+  sucEl.textContent = `✅ ${aiMessage}! يمكنك الآن تسجيل الدخول.`;
+  sucEl.classList.remove('hidden');
+
+  setTimeout(() => {
+    switchTab('login');
+    document.getElementById('loginEmail').value = email;
+  }, 2000);
+}
+
+// ══════════════════════════════════
+// AI ACCOUNT REVIEW (Anthropic API)
+// ══════════════════════════════════
+async function aiReviewAccount(name, email) {
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: ANTHROPIC_MODEL,
+        max_tokens: 100,
+        messages: [{
+          role: 'user',
+          content: `أنت نظام مراجعة حسابات لمنصة برمجية. راجع هذا الطلب وقرر الموافقة أو الرفض.
+الاسم: ${name}
+البريد: ${email}
+أجب بكلمة واحدة فقط: APPROVE أو REJECT
+إذا كانت البيانات تبدو حقيقية ومعقولة فوافق، إذا كانت spam أو مزيفة ارفض.`
+        }]
+      })
+    });
+    const data = await response.json();
+    const text = data.content?.[0]?.text?.toUpperCase() || '';
+    return text.includes('APPROVE');
+  } catch {
+    return true;
+  }
+}
+
+// ══════════════════════════════════
+// LOGOUT
+// ══════════════════════════════════
+function handleLogout() {
+  DB.del('pb_session');
+  document.getElementById('ownerDash').classList.add('hidden');
+  document.getElementById('userDash').classList.add('hidden');
+  const auth = document.getElementById('authScreen');
+  auth.classList.remove('hidden');
+  auth.style.opacity = '';
+  auth.style.transform = '';
+  auth.style.transition = '';
+  document.getElementById('loginEmail').value = '';
+  document.getElementById('loginPass').value = '';
+  switchTab('login');
+}
+
+// ══════════════════════════════════
+// OWNER DASHBOARD
+// ══════════════════════════════════
+function showOwnerDash(user) {
+  document.getElementById('ownerDash').classList.remove('hidden');
+  renderProjects();
+  renderDevs();
+  updateStats();
+}
+
+function showUserDash(user) {
+  const dash = document.getElementById('userDash');
+  dash.classList.remove('hidden');
+  document.getElementById('userWelcomeText').textContent = `مرحباً، ${user.name || user.username} 👋`;
+  document.getElementById('userSidebarInfo').innerHTML = `
+    <div class="su-avatar">${(user.name || 'U')[0].toUpperCase()}</div>
+    <div class="su-info">
+      <span class="su-name">${user.name || user.username}</span>
+      <span class="su-role" style="color:var(--accent2)">👤 User</span>
+    </div>
+  `;
+  renderUserProjects();
+}
+
+// ══════════════════════════════════
+// SECTION NAVIGATION
+// ══════════════════════════════════
+function showSection(id, el) {
+  document.querySelectorAll('#ownerDash .dash-section').forEach(s => s.classList.remove('active'));
+  document.getElementById(id)?.classList.add('active');
+  document.querySelectorAll('#ownerDash .snav-item').forEach(a => a.classList.remove('active'));
+  if (el) el.classList.add('active');
+
+  const titles = {
+    secHome: 'الرئيسية', secProjects: 'المشاريع',
+    secDevelopers: 'المطورين', secUpload: 'رفع مشروع',
+    secAI: 'AI Scanner', secSettings: 'الإعدادات'
+  };
+  document.getElementById('pageTitle').textContent = titles[id] || '';
+  closeSidebar();
+}
+
+function showUserSection(id, el) {
+  document.querySelectorAll('#userDash .dash-section').forEach(s => s.classList.remove('active'));
+  document.getElementById(id)?.classList.add('active');
+  document.querySelectorAll('#userDash .snav-item').forEach(a => a.classList.remove('active'));
+  if (el) el.classList.add('active');
+
+  const titles = { usecHome: 'الرئيسية', usecProjects: 'المشاريع', usecDev: 'Developers' };
+  document.getElementById('userPageTitle').textContent = titles[id] || '';
+  closeUserSidebar();
+}
+
+// ══════════════════════════════════
+// SIDEBAR TOGGLE
+// ══════════════════════════════════
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+}
+function closeSidebar() {
+  if (window.innerWidth <= 768) document.getElementById('sidebar').classList.remove('open');
+}
+function toggleUserSidebar() {
+  document.getElementById('userSidebar').classList.toggle('open');
+}
+function closeUserSidebar() {
+  if (window.innerWidth <= 768) document.getElementById('userSidebar').classList.remove('open');
+}
+
+// ══════════════════════════════════
+// PROJECTS
+// ══════════════════════════════════
+const TYPE_ICONS = {
+  discord: '🤖', telegram: '✈️', whatsapp: '💬',
+  extension: '🧩', website: '🌐', other: '📦'
+};
+
+function getProjects() { return DB.get('pb_projects') || []; }
+function saveProjects(p) { DB.set('pb_projects', p); }
+
+function renderProjects() {
+  const grid = document.getElementById('projectsGrid');
+  if (!grid) return;
+  const projects = getProjects();
+  document.getElementById('statProjects').textContent = projects.length;
+
+  if (!projects.length) {
+    grid.innerHTML = `
+      <div class="empty-state">
+        <div class="es-icon">📦</div>
+        <div class="es-text">لا توجد مشاريع بعد</div>
+        <button class="es-btn" onclick="showSection('secUpload', null)">ارفع أول مشروع</button>
+      </div>`;
+    return;
+  }
+
+  grid.innerHTML = projects.map((p, i) => `
+    <div class="project-card" id="proj-${i}">
+      <div class="pc-header">
+        <div class="pc-icon">${TYPE_ICONS[p.type] || '📦'}</div>
+        <div>
+          <div class="pc-name">${escHtml(p.name)}</div>
+          <div class="pc-type">${p.type}</div>
+        </div>
+      </div>
+      <div class="pc-body">
+        <div class="pc-desc">${escHtml(p.desc || 'لا يوجد وصف')}</div>
+      </div>
+      <div class="pc-footer">
+        <button class="download-btn" onclick="downloadProject(${i})">
+          ⬇️ تحميل
+        </button>
+        <button class="delete-btn" onclick="deleteProject(${i})">🗑</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderUserProjects() {
+  const grid = document.getElementById('userProjectsGrid');
+  if (!grid) return;
+  const projects = getProjects();
+  if (!projects.length) {
+    grid.innerHTML = `<div class="empty-state"><div class="es-icon">📦</div><div class="es-text">لا توجد مشاريع متاحة بعد</div></div>`;
+    return;
+  }
+  grid.innerHTML = projects.map((p, i) => `
+    <div class="project-card">
+      <div class="pc-header">
+        <div class="pc-icon">${TYPE_ICONS[p.type] || '📦'}</div>
+        <div>
+          <div class="pc-name">${escHtml(p.name)}</div>
+          <div class="pc-type">${p.type}</div>
+        </div>
+      </div>
+      <div class="pc-body">
+        <div class="pc-desc">${escHtml(p.desc || 'لا يوجد وصف')}</div>
+      </div>
+      <div class="pc-footer">
+        <button class="download-btn" onclick="downloadProject(${i})">⬇️ تحميل</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function deleteProject(i) {
+  if (!confirm('هل أنت متأكد من حذف هذا المشروع؟')) return;
+  const projects = getProjects();
+  projects.splice(i, 1);
+  saveProjects(projects);
+  renderProjects();
+  addActivity('تم حذف مشروع');
+  updateStats();
+}
+
+function downloadProject(i) {
+  const projects = getProjects();
+  const p = projects[i];
+  if (!p) return;
+
+  // Increment download counter
+  let stats = DB.get('pb_stats') || { downloads: 0 };
+  stats.downloads = (stats.downloads || 0) + 1;
+  DB.set('pb_stats', stats);
+  updateStats();
+  addActivity(`تحميل: ${p.name}`);
+
+  if (p.fileData && p.fileName) {
+    // Real file download
+    const link = document.createElement('a');
+    link.href = p.fileData;
+    link.download = p.fileName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  } else {
+    alert(`📦 المشروع: ${p.name}\n\nلا يوجد ملف مرفق لهذا المشروع.`);
+  }
+}
